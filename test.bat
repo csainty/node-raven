@@ -1,0 +1,1 @@
+.\node_modules\.bin\mocha --require should .\test\client.test.js
