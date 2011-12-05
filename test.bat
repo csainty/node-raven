@@ -1,1 +1,1 @@
-.\node_modules\.bin\mocha --require should .\test\client.test.js
+.\node_modules\.bin\mocha .\test\client.test.js

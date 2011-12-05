@@ -4,8 +4,7 @@
 	"version":"0.0.1",
 	"author":"Chris Sainty <csainty@hotmail.com>",
 	"dependencies": {
-		"request": ">= 2.2.9",
-		"qs": ">= 0.4.0"
+		"request": ">= 2.2.9"
 	},
 	"devDependencies": {
 		"mocha": ">= 0.3.1",

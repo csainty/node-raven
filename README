@@ -1,0 +1,11 @@
+node-raven is a RavenDB client for Node.
+
+var raven = require('node-raven');
+var client = raven('http://localhost:8080');	// URL of your RavenDb server
+
+To use this code you need to
+npm install request
+
+To test this code you also need to
+npm install mocha
+npm install should
