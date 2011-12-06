@@ -9,3 +9,8 @@ npm install request
 To test this code you also need to
 npm install mocha
 npm install should
+
+These dependencies are in the package.json, so you can just 'npm install' to get them all.
+
+The test script assumes a dedicated ravendb instance is running on http://localhost:8080, 
+I suggest putting an empty server into a RavenDb sub folder and running up the Raven.Serer.exe
