@@ -1,4 +1,3 @@
-var databaseNames;
 var server_url = 'http://localhost:8080';
 var util = require('util');
 var should = require('should');
@@ -43,28 +42,12 @@ describe('Setup', function() {
 })
 
 describe('Client', function() {
-	describe('constructQuery()', function() {
-		it('should prepend server name to queries', function(){
-			server.constructQuery('/databases').should.equal('http://localhost:8080/databases');
-		})
-	})
-
-	describe('getDatabaseNames()', function() {
-		it('should return an array of database names', function(done){
-			server.getDatabaseNames(function (result){
-				should.exist(result);
-				result.should.be.an.instanceof(Array);
-				databaseNames = result;
-				done();
-			})
-		})
-	})
-	
 	describe('putdocument()', function() {
 		it('should return true when saving a document', function (done) {
-			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(result){
+			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(result, ok){
 				should.exist(result);
-				result.should.be.true;
+				should.not.exist(result.error);
+				ok.should.be.true;
 				done();
 			})
 		})
@@ -72,16 +55,19 @@ describe('Client', function() {
 	
 	describe('getDocument()', function(){
 		it('should return null if document is not found', function (done) {
-			server.getDocument('invalidKey', function(result) {
-				should.not.exist(result);
+			server.getDocument('invalidKey', function(result, data) {
+				should.exist(result);
+				result.statusCode.should.equal(404);
+				should.not.exist(data);
 				done();
 			});
 		})
 		it('should return the correct document', function (done) {
-			server.getDocument('genres/1', function(result) {
+			server.getDocument('genres/1', function(result, data) {
 				should.exist(result);
-				result.should.have.property('Name');
-				result.Name.should.equal('Rock');
+				should.exist(data);
+				data.should.have.property('Name');
+				data.Name.should.equal('Rock');
 				done();
 			});
 		})
@@ -89,17 +75,33 @@ describe('Client', function() {
 	
 	describe('ensureDatabaseExists()', function() {
 		it('should create a database that does not exist', function(done){
-			server.ensureDatabaseExists('node-raven', done);
+			server.ensureDatabaseExists('node-raven', function(result, ok) {
+				should.exist(result);
+				should.exist(ok);
+				ok.should.be.true;
+				done();
+			});
 		})
 		it('should not error when a database already exists', function(done){
-			server.ensureDatabaseExists('node-raven', done);
+			server.ensureDatabaseExists('node-raven', function(result, ok) {
+				should.exist(result);
+				should.exist(ok);
+				ok.should.be.true;
+				done();
+			});
 		})
 	})
 
-	describe('queryIndex()', function(){
-		it('should return results', function(done) {
-			server.queryIndex('test', '', function(result) {
-				result.should.equal('test');
+	// Now we have created a database, we can check the getDatabaseNames() function
+	describe('getDatabaseNames()', function() {
+		it('should return an array of database names', function(done){
+			server.getDatabaseNames(function (result, data){
+				should.exist(result);
+				should.exist(data)
+				data.should.be.an.instanceof(Array);
+				data.should.have.length(1);
+				data[0].should.have.property('@metadata');
+				data[0]['@metadata']['@id'].should.equal('Raven/Databases/node-raven');
 				done();
 			})
 		})
