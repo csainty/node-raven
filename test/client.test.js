@@ -42,6 +42,15 @@ describe('Setup', function() {
 })
 
 describe('Client', function() {
+	describe('buildRavenQuery()', function(){
+		it('should correctly encode a raven query', function(){
+			server.buildRavenQuery({ 'Name' : 'Chris' }).should.equal('Name%3AChris');
+		})
+		it('should correctly encode a raven query with multiple values', function(){
+			server.buildRavenQuery({ 'Name' : 'Chris', 'Surname' : 'Sainty' }).should.equal('Name%3AChris%20Surname%3ASainty');
+		})
+	})
+	
 	describe('putdocument()', function() {
 		it('should return true when saving a document', function (done) {
 			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(result, ok){
@@ -71,6 +80,33 @@ describe('Client', function() {
 				done();
 			});
 		})
+	})
+	
+	describe('queryIndex()', function(){
+		it('should be able to perform a query', function(done){
+			server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'WaitForNonStaleResults' : true }, function (result, data) {
+				should.exist(result);
+				should.not.exist(result.error);
+				should.exist(data);
+				data.should.include.object({ 'IndexName' : 'Artists', 'IsStale' : false, 'TotalResults' : 1 });
+				data.should.have.property('Results');
+				data.Results.should.be.an.instanceof(Array);
+				data.Results.should.have.length(1);
+				done();
+			});
+		})
+		it('should be able to perform a query with multiple criteria', function(done){
+			server.queryIndex('Artists', { query : { 'Name' : 'A*', 'Id' : 'artists/1' }, 'WaitForNonStaleResults' : true }, function (result, data) {
+				should.exist(result);
+				should.not.exist(result.error);
+				should.exist(data);
+				data.should.include.object({ 'IndexName' : 'Artists', 'IsStale' : false, 'TotalResults' : 14 });
+				data.should.have.property('Results');
+				data.Results.should.be.an.instanceof(Array);
+				data.Results.should.have.length(14);
+				done();
+			});
+		})	
 	})
 	
 	describe('ensureDatabaseExists()', function() {
