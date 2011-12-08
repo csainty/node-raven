@@ -90,6 +90,15 @@ describe('Client', function() {
 				done();
 			});
 		})
+		it('should not allow a database with invalid characters in the name', function(done){
+			server.ensureDatabaseExists('node/raven', function(result, ok) {
+				should.exist(result);
+				should.exist(ok);
+				should.exist(result.error);
+				ok.should.be.false;
+				done();
+			});
+		})
 	})
 
 	// Now we have created a database, we can check the getDatabaseNames() function
