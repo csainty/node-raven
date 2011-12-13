@@ -53,9 +53,9 @@ describe('Client', function() {
 	
 	describe('putdocument()', function() {
 		it('should return true when saving a document', function (done) {
-			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(result, ok){
+			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(error, result, ok){
+				should.not.exist(error);
 				should.exist(result);
-				should.not.exist(result.error);
 				ok.should.be.true;
 				done();
 			})
@@ -64,7 +64,8 @@ describe('Client', function() {
 	
 	describe('getDocument()', function(){
 		it('should return null if document is not found', function (done) {
-			server.getDocument('invalidKey', function(result, data) {
+			server.getDocument('invalidKey', function(error, result, data) {
+				should.not.exist(error);
 				should.exist(result);
 				result.statusCode.should.equal(404);
 				should.not.exist(data);
@@ -72,11 +73,11 @@ describe('Client', function() {
 			});
 		})
 		it('should return the correct document', function (done) {
-			server.getDocument('genres/1', function(result, data) {
+			server.getDocument('genres/1', function(error, result, data) {
+				should.not.exist(error);
 				should.exist(result);
 				should.exist(data);
-				data.should.have.property('Name');
-				data.Name.should.equal('Rock');
+				data.should.include.object({ 'Name': 'Rock'});
 				done();
 			});
 		})
@@ -84,9 +85,9 @@ describe('Client', function() {
 	
 	describe('queryIndex()', function(){
 		it('should be able to perform a query', function(done){
-			server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'WaitForNonStaleResults' : true }, function (result, data) {
+			server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'WaitForNonStaleResults' : true }, function (error, result, data) {
+				should.not.exist(error);
 				should.exist(result);
-				should.not.exist(result.error);
 				should.exist(data);
 				data.should.include.object({ 'IndexName' : 'Artists', 'IsStale' : false, 'TotalResults' : 1 });
 				data.should.have.property('Results');
@@ -96,9 +97,9 @@ describe('Client', function() {
 			});
 		})
 		it('should be able to perform a query with multiple criteria', function(done){
-			server.queryIndex('Artists', { query : { 'Name' : 'A*', 'Id' : 'artists/1' }, 'WaitForNonStaleResults' : true }, function (result, data) {
+			server.queryIndex('Artists', { query : { 'Name' : 'A*', 'Id' : 'artists/1' }, 'WaitForNonStaleResults' : true }, function (error, result, data) {
+				should.not.exist(error);
 				should.exist(result);
-				should.not.exist(result.error);
 				should.exist(data);
 				data.should.include.object({ 'IndexName' : 'Artists', 'IsStale' : false, 'TotalResults' : 14 });
 				data.should.have.property('Results');
@@ -111,7 +112,8 @@ describe('Client', function() {
 	
 	describe('ensureDatabaseExists()', function() {
 		it('should create a database that does not exist', function(done){
-			server.ensureDatabaseExists('node-raven', function(result, ok) {
+			server.ensureDatabaseExists('node-raven', function(error, result, ok) {
+				should.not.exist(error);
 				should.exist(result);
 				should.exist(ok);
 				ok.should.be.true;
@@ -119,7 +121,8 @@ describe('Client', function() {
 			});
 		})
 		it('should not error when a database already exists', function(done){
-			server.ensureDatabaseExists('node-raven', function(result, ok) {
+			server.ensureDatabaseExists('node-raven', function(error, result, ok) {
+				should.not.exist(error);
 				should.exist(result);
 				should.exist(ok);
 				ok.should.be.true;
@@ -127,10 +130,9 @@ describe('Client', function() {
 			});
 		})
 		it('should not allow a database with invalid characters in the name', function(done){
-			server.ensureDatabaseExists('node/raven', function(result, ok) {
-				should.exist(result);
+			server.ensureDatabaseExists('node/raven', function(error, result, ok) {
+				should.exist(error);
 				should.exist(ok);
-				should.exist(result.error);
 				ok.should.be.false;
 				done();
 			});
@@ -154,7 +156,8 @@ describe('Client', function() {
 	// Now we have created a database, we can check the getDatabaseNames() function
 	describe('getDatabaseNames()', function() {
 		it('should return an array of database names', function(done){
-			server.getDatabaseNames(function (result, data){
+			server.getDatabaseNames(function (error, result, data){
+				should.not.exist(error);
 				should.exist(result);
 				should.exist(data)
 				data.should.be.an.instanceof(Array);

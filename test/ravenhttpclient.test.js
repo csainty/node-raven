@@ -26,8 +26,8 @@ describe('RavenHttpClient', function(){
 	})
 	describe('.get', function() {
 		it('should be able to perform a GET request', function(done) {
-			ravenhttpclient.get('/databases', null, function(result) {
-				should.not.exist(result.error);
+			ravenhttpclient.get('/databases', null, function(error, result) {
+				should.not.exist(error);
 				result.statusCode.should.equal(200);
 				result.asJson().should.be.an.instanceof(Array);
 				done();
@@ -36,8 +36,8 @@ describe('RavenHttpClient', function(){
 	})
 	describe('.put', function(){
 		it('should be able to perform a PUT request', function(done) {
-			ravenhttpclient.put('/docs/testput/1', null, { 'name' : 'test' }, function(result) {
-				should.not.exist(result.error);
+			ravenhttpclient.put('/docs/testput/1', null, { 'name' : 'test' }, function(error, result) {
+				should.not.exist(error);
 				result.statusCode.should.equal(201);
 				done();
 			})
