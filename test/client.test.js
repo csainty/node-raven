@@ -137,6 +137,20 @@ describe('Client', function() {
 		})
 	})
 
+	describe('generateDocumentKey()', function(){
+		it('should have created a default key generator', function() {
+			should.exist(server.keyGenerator);
+		})
+		it('should assign key to document', function(done) {
+			server.generateDocumentKey('Album', { name: 'My Album' }, function(error, entity, key) {
+				should.not.exist(error);
+				should.exist(key);
+				entity.should.include.object({ name : 'My Album', id: key });
+				done();
+			})
+		})
+	})
+
 	// Now we have created a database, we can check the getDatabaseNames() function
 	describe('getDatabaseNames()', function() {
 		it('should return an array of database names', function(done){
