@@ -19,6 +19,7 @@ To test this code you also need to
 ```
 npm install mocha
 npm install should
+npm install jshint
 ```
 
 These dependencies are in the package.json, so you can just _npm install_ to get them all.
@@ -38,3 +39,4 @@ NodeJs - http://nodejs.org
 Should - https://github.com/visionmedia/should.js  
 Request - https://github.com/mikeal/request  
 Mocha - http://visionmedia.github.com/mocha/  
+Jshint - https://github.com/jshint/node-jshint  
