@@ -51,7 +51,7 @@ describe('Client', function() {
 		})
 	})
 	
-	describe('putdocument()', function() {
+	describe('putDocument()', function() {
 		it('should return true when saving a document', function (done) {
 			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(error, result, ok){
 				should.not.exist(error);
@@ -67,8 +67,8 @@ describe('Client', function() {
 			server.getDocument('invalidKey', function(error, result, data) {
 				should.not.exist(error);
 				should.exist(result);
-				result.statusCode.should.equal(404);
 				should.not.exist(data);
+				result.statusCode.should.equal(404);
 				done();
 			});
 		})
@@ -129,7 +129,7 @@ describe('Client', function() {
 				done();
 			});
 		})
-		it('should not allow a database with invalid characters in the name', function(done){
+		it('should not allow a database with invalid character / in the name', function(done){
 			server.ensureDatabaseExists('node/raven', function(error, result, ok) {
 				should.exist(error);
 				should.exist(ok);
@@ -137,6 +137,46 @@ describe('Client', function() {
 				done();
 			});
 		})
+		it('should not allow a database with invalid character \\ in the name', function(done){
+			server.ensureDatabaseExists('node\\raven', function(error, result, ok) {
+				should.exist(error);
+				should.exist(ok);
+				ok.should.be.false;
+				done();
+			});
+		})		
+		it('should not allow a database with invalid character < in the name', function(done){
+			server.ensureDatabaseExists('node<raven', function(error, result, ok) {
+				should.exist(error);
+				should.exist(ok);
+				ok.should.be.false;
+				done();
+			});
+		})		
+		it('should not allow a database with invalid character > in the name', function(done){
+			server.ensureDatabaseExists('node>raven', function(error, result, ok) {
+				should.exist(error);
+				should.exist(ok);
+				ok.should.be.false;
+				done();
+			});
+		})		
+		it('should not allow a database with invalid character \' in the name', function(done){
+			server.ensureDatabaseExists('node\'raven', function(error, result, ok) {
+				should.exist(error);
+				should.exist(ok);
+				ok.should.be.false;
+				done();
+			});
+		})		
+		it('should not allow a database with invalid character " in the name', function(done){
+			server.ensureDatabaseExists('node"raven', function(error, result, ok) {
+				should.exist(error);
+				should.exist(ok);
+				ok.should.be.false;
+				done();
+			});
+		})		
 	})
 
 	describe('generateDocumentKey()', function(){
