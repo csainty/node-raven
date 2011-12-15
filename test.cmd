@@ -1,17 +1,19 @@
 @echo off
-del /q /s .\Ravendb\data > NUL
-del /q /s .\Ravendb\logs > NUL
-start "node-raven-test-server" /MIN .\RavenDb\Raven.Server
-node .\test\waitforserver.js
 
-echo ---
-echo Test results
-echo ---
-cmd /C .\node_modules\.bin\mocha .\test\ravenhttpclient.test.js .\test\HiLoKeyGenerator.test.js .\test\client.test.js 
-taskkill /F /FI "WINDOWTITLE eq node-raven-test-server" > NUL
+FOR /D %%f IN (RavenDb*) DO CALL :test %%f
 
-echo ---
-echo JShint results
-echo ---
+echo.---JShint results---
 cmd /C .\node_modules\.bin\jshint .\lib\client.js .\lib\ravenhttpclient.js .\lib\HiLoKeyGenerator.js
 
+GOTO :EOF
+
+:test
+@ECHO.Testing %1
+del /q /s .\%1\data > NUL
+del /q /s .\%1\logs > NUL
+start "node-raven-test-server" /MIN .\%1\Raven.Server
+node .\test\waitforserver.js
+
+echo.---Test results for %1---
+cmd /C .\node_modules\.bin\mocha .\test\ravenhttpclient.test.js .\test\HiLoKeyGenerator.test.js .\test\client.test.js 
+taskkill /F /FI "WINDOWTITLE eq node-raven-test-server" > NUL
