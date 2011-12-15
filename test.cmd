@@ -1,5 +1,6 @@
 @echo off
 del /q /s .\Ravendb\data > NUL
+del /q /s .\Ravendb\logs > NUL
 start "node-raven-test-server" /MIN .\RavenDb\Raven.Server
 node .\test\waitforserver.js
 
