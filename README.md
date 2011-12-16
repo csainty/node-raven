@@ -24,9 +24,9 @@ npm install jshint
 
 These dependencies are in the package.json, so you can just _npm install_ to get them all.
 
-The test.cmd script assumes a dedicated RavenDb instance is sitting in the _.\RavenDb_ folder.  
+The test.cmd script assumes a dedicated RavenDb instance is sitting in the .\RavenDb folder.  
 It will delete the data folder, start and stop the server for each run of the tests.  
-You can test against multiple RavenDb versions or configurations by createing additional folders in the format _.\RavenDb_{Name}_, the test script will run the tests against the RavenDb instance in each folder.
+You can test against multiple RavenDb versions or configurations by createing additional folders in the format .\RavenDb_{Name}, the test script will run the tests against the RavenDb instance in each folder.
 
 Since there is no auth support yet, please change the following setting (from it's default Get) in Raven.Server.config
 
