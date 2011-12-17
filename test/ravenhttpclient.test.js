@@ -7,6 +7,17 @@ var ravenhttpclient = require('../lib/ravenhttpclient')(server_url);
 var ravenhttpclient_mt = require('../lib/ravenhttpclient')(server_url_mt);
 
 describe('RavenHttpClient', function(){
+	describe('options', function() {
+		it('should throw an error when no server is specified', function(){
+			(function () { require('../lib/ravenhttpclient')(); }).should.throw();
+		})
+		it('should allow the server url to passed as a string', function(){
+			(function () { require('../lib/ravenhttpclient')(server_url); }).should.not.throw();
+		})
+		it('should allow the server url to be passed on the options object', function(){
+			(function () { require('../lib/ravenhttpclient')({ server_url: server_url }); }).should.not.throw();
+		})
+	})
 	describe('.buildUrl', function(){
 		it('should correctly handle path and query string', function(){
 			ravenhttpclient.buildUrl('test', {'q':'search'}).should.equal(server_url + '/test?q=search');

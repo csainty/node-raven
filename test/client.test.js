@@ -77,7 +77,7 @@ describe('Client', function() {
 				should.not.exist(error);
 				should.exist(result);
 				should.exist(data);
-				data.should.include.object({ 'Name': 'Rock'});
+				data.Name.should.equal('Rock');
 				done();
 			});
 		})
@@ -89,7 +89,9 @@ describe('Client', function() {
 				should.not.exist(error);
 				should.exist(result);
 				should.exist(data);
-				data.should.include.object({ 'IndexName' : 'Artists', 'IsStale' : false, 'TotalResults' : 1 });
+				data.IndexName.should.equal('Artists');
+				data.IsStale.should.be.false;
+				data.TotalResults.should.equal(1);
 				data.should.have.property('Results');
 				data.Results.should.be.an.instanceof(Array);
 				data.Results.should.have.length(1);
@@ -101,7 +103,9 @@ describe('Client', function() {
 				should.not.exist(error);
 				should.exist(result);
 				should.exist(data);
-				data.should.include.object({ 'IndexName' : 'Artists', 'IsStale' : false, 'TotalResults' : 14 });
+				data.IndexName.should.equal('Artists');
+				data.IsStale.should.be.false;
+				data.TotalResults.should.equal(14);
 				data.should.have.property('Results');
 				data.Results.should.be.an.instanceof(Array);
 				data.Results.should.have.length(14);
@@ -187,7 +191,8 @@ describe('Client', function() {
 			server.generateDocumentKey('Album', { name: 'My Album' }, function(error, entity, key) {
 				should.not.exist(error);
 				should.exist(key);
-				entity.should.include.object({ name : 'My Album', id: key });
+				entity.name.should.equal('My Album');
+				entity.id.should.equal(key);
 				done();
 			})
 		})
