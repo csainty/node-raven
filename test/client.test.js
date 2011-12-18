@@ -42,6 +42,18 @@ describe('Setup', function() {
 })
 
 describe('Client', function() {
+	describe('options', function(){
+		it('should error if no server_url is passed in', function(){
+			(function() { require('../lib/client')(); }).should.throw();
+		})
+		it('should allow the server_url to be passed in as a string', function(){
+			(function() { require('../lib/client')(server_url); }).should.not.throw();
+		})
+		it('should allow the server_url to be passed in via the options hash', function(){
+			(function() { require('../lib/client')({ server_url: server_url }); }).should.not.throw();
+		})
+	})
+
 	describe('buildRavenQuery()', function(){
 		it('should correctly encode a raven query', function(){
 			server.buildRavenQuery({ 'Name' : 'Chris' }).should.equal('Name%3AChris');
@@ -85,7 +97,7 @@ describe('Client', function() {
 	
 	describe('queryIndex()', function(){
 		it('should be able to perform a query', function(done){
-			server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'WaitForNonStaleResults' : true }, function (error, result, data) {
+			server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'waitForNonStaleResults' : true }, function (error, result, data) {
 				should.not.exist(error);
 				should.exist(result);
 				should.exist(data);
@@ -99,7 +111,7 @@ describe('Client', function() {
 			});
 		})
 		it('should be able to perform a query with multiple criteria', function(done){
-			server.queryIndex('Artists', { query : { 'Name' : 'A*', 'Id' : 'artists/1' }, 'WaitForNonStaleResults' : true }, function (error, result, data) {
+			server.queryIndex('Artists', { query : { 'Name' : 'A*', 'Id' : 'artists/1' }, 'waitForNonStaleResults' : true }, function (error, result, data) {
 				should.not.exist(error);
 				should.exist(result);
 				should.exist(data);
