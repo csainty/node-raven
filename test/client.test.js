@@ -93,6 +93,19 @@ describe('Client', function() {
 				done();
 			});
 		})
+		it('should return a document with metadata', function (done) {
+			server.getDocument('genres/1', function(error, result, data) {
+				should.not.exist(error);
+				should.exist(result);
+				should.exist(data);
+				data.should.have.property('@metadata');
+				data['@metadata'].should.have.property('etag');
+				data['@metadata'].should.have.property('raven-entity-name');
+				data['@metadata'].etag.should.equal('00000000-0000-0100-0000-00000000000e');
+				data['@metadata']['raven-entity-name'].should.equal('Genres');
+				done();
+			});			
+		})
 	})
 	
 	describe('queryIndex()', function(){
