@@ -72,6 +72,44 @@ describe('Client', function() {
 				done();
 			})
 		})
+		it('should save a document even though it is out of date if optimistic concurrency is off', function(done){
+			var doc = {
+				'Name': 'Hip Hop',
+				'@metadata': {
+					'etag': '00000000-0000-0000-0000-000000000000',
+					'raven-entity-name': 'Genres'
+				}
+			};
+			server.putDocument('genres/2', doc, function(error, result, ok) {
+				should.not.exist(error);
+				should.exist(result);
+				should.exist(ok);
+				result.statusCode.should.equal(201);
+				ok.should.be.true;
+				done();
+			})
+		})
+
+		it('should not save a document with an etag less than on the server when optimistic concurrency is on', function(done){
+			var doc, 
+				myServer;
+			doc = {
+				'Name': 'Rock',
+				'@metadata': {
+					'etag': '00000000-0000-0000-0000-000000000000',
+					'raven-entity-name': 'Genres'
+				}
+			};
+			myServer= raven({server_url: server_url, useOptimisticConcurrency: true});
+			myServer.putDocument('genres/1', doc, function(error, result, ok) {
+				should.not.exist(error);
+				should.exist(result);
+				should.exist(ok);
+				result.statusCode.should.equal(409);
+				ok.should.be.false;
+				done();
+			})
+		})
 	})
 	
 	describe('getDocument()', function(){

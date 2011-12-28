@@ -47,7 +47,7 @@ describe('RavenHttpClient', function(){
 	})
 	describe('.put', function(){
 		it('should be able to perform a PUT request', function(done) {
-			ravenhttpclient.put('/docs/testput/1', null, { 'name' : 'test' }, function(error, result) {
+			ravenhttpclient.put('/docs/testput/1', null, { 'name' : 'test' }, { 'etag' : '00000000-0000-0000-000000000000', 'raven-entity-name': 'TestPut' }, function(error, result) {
 				should.not.exist(error);
 				result.statusCode.should.equal(201);
 				done();

@@ -12,6 +12,7 @@ To use this code you need to
 
 ```
 npm install request
+npm install underscore
 ```
 
 To test this code you also need to
@@ -37,8 +38,9 @@ Since there is no auth support yet, please change the following setting (from it
 See Also  
 RavenDb - http://www.ravendb.net  
 NodeJs - http://nodejs.org  
-Should - https://github.com/visionmedia/should.js  
 Request - https://github.com/mikeal/request  
+Underscore - http://documentcloud.github.com/underscore/  
+Should - https://github.com/visionmedia/should.js  
 Mocha - http://visionmedia.github.com/mocha/  
 Jshint - https://github.com/jshint/node-jshint  
 Chris Sainty - http://csainty.blogspot.com  -  @csainty  
