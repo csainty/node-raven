@@ -155,12 +155,9 @@ describe('Client', function() {
 			done();
 		})
 		it('should generate a key for a new document', function(done){
-			var doc = {
-				'@metadata':{
-					'raven-entity-name': 'TestDoc'
-				},
-				'data': 'My test data'
-			};
+			var doc = server.createDocument('TestDoc', {
+				'data': 'My new test data'
+			});
 			server.store(doc, function(error, result, ok) {
 				should.not.exist(error);
 				should.exist(result);
@@ -171,13 +168,10 @@ describe('Client', function() {
 			});
 		})
 		it('should update a document with an existing key', function(done){
-			var doc = {
-				'@metadata':{
-					'raven-entity-name': 'TestDoc'
-				},
+			var doc = server.createDocument('TestDoc', {
 				'id': 'TestDoc/1',
 				'data': 'My new test data'
-			};
+			});
 			server.store(doc, function(error, result, ok) {
 				should.not.exist(error);
 				should.exist(result);
@@ -288,6 +282,24 @@ describe('Client', function() {
 				done();
 			});
 		})		
+	})
+
+	describe('createDocument()', function() {
+		it('should be able to create a blank document with the propvided metadata set', function() {
+			var result = server.createDocument('TestDoc');
+			should.exist(result);
+			result.should.have.property('@metadata');
+			result['@metadata'].should.have.property('raven-entity-name');
+			result['@metadata']['raven-entity-name'].should.equal('TestDoc');
+		})
+		it('should be able to add metadata to the provided document', function() {
+			var result = server.createDocument('TestDoc', { 'data' : 'Test Data' });
+			should.exist(result);
+			result.should.have.property('@metadata');
+			result['@metadata'].should.have.property('raven-entity-name');
+			result['@metadata']['raven-entity-name'].should.equal('TestDoc');
+			result.data.should.equal('Test Data');
+		})
 	})
 
 	describe('generateDocumentKey()', function(){
