@@ -146,6 +146,50 @@ describe('Client', function() {
 		})
 	})
 	
+	describe('store()', function() {
+		it('should error when there is no metadata available', function(done){
+			var doc = {
+				'data': 'Test Data'	
+			};
+			(function() {server.store(doc, function(){ })}).should.throw();
+			done();
+		})
+		it('should generate a key for a new document', function(done){
+			var doc = {
+				'@metadata':{
+					'raven-entity-name': 'TestDoc'
+				},
+				'data': 'My test data'
+			};
+			server.store(doc, function(error, result, ok) {
+				should.not.exist(error);
+				should.exist(result);
+				should.exist(ok);
+				ok.should.be.true;
+				doc.should.have.property('id');
+				done();
+			});
+		})
+		it('should update a document with an existing key', function(done){
+			var doc = {
+				'@metadata':{
+					'raven-entity-name': 'TestDoc'
+				},
+				'id': 'TestDoc/1',
+				'data': 'My new test data'
+			};
+			server.store(doc, function(error, result, ok) {
+				should.not.exist(error);
+				should.exist(result);
+				should.exist(ok);
+				ok.should.be.true;
+				doc.should.have.property('id');
+				doc.id.should.equal('TestDoc/1');
+				done();
+			});
+		})
+	})
+
 	describe('queryIndex()', function(){
 		it('should be able to perform a query', function(done){
 			server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'waitForNonStaleResults' : true }, function (error, result, data) {
