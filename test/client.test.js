@@ -52,6 +52,14 @@ describe('Client', function() {
 		it('should allow the server_url to be passed in via the options hash', function(){
 			(function() { require('../lib/client')({ server_url: server_url }); }).should.not.throw();
 		})
+		it('should allow a database name to be specified', function() {
+			var server2 = require('../lib/client')({ server_url: server_url, databaseName: 'testing' });
+			server2.server_url.should.equal('http://localhost:8080/databases/testing');
+		})
+		it('should trim a trailing slash from a server url', function() {
+			var server2 = require('../lib/client')({ server_url: server_url + '/'});
+			server2.server_url.should.equal(server_url);
+		})
 	})
 
 	describe('buildRavenQuery()', function(){
@@ -282,6 +290,14 @@ describe('Client', function() {
 				done();
 			});
 		})		
+	})
+
+	describe('userDatabase()', function() {
+		it('should alter the server url when using a database', function() {
+			var server2 = require('../lib/client')({ server_url : server_url});
+			server2.useDatabase('testing');
+			server2.server_url.should.equal('http://localhost:8080/databases/testing');
+		})
 	})
 
 	describe('createDocument()', function() {
