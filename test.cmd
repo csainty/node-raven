@@ -3,7 +3,7 @@
 FOR /D %%f IN (RavenDb*) DO CALL :test %%f
 
 echo.---JShint results---
-cmd /C .\node_modules\.bin\jshint .\lib\client.js .\lib\ravenhttpclient.js .\lib\HiLoKeyGenerator.js --config test\jshint-config.json
+cmd /C .\node_modules\.bin\jshint .\lib\client.js .\lib\ravenhttpclient.js .\lib\HiLoKeyGenerator.js .\sample\app.js --config test\jshint-config.json
 
 GOTO :EOF
 
