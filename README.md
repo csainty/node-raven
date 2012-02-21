@@ -6,7 +6,7 @@ If you are on Windows, make sure you use the MSI installer for Node which includ
 http://nodejs.org/#download
 
 
-See test/client.test.json for exmaples of usage.
+See test/client.test.json for exmaples of usage. It is still very early days.
 
 To use this code you need to
 
