@@ -1,4 +1,19 @@
-{
+var jshint = require('../node_modules/jshint/lib/hint.js');
+
+var files = [
+  './'
+];
+var ignore = [
+  'node_modules',
+  'utils',
+  'test',
+  'sample'
+];
+
+jshint.hint(files, config(), undefined, ignore);
+
+function config() {
+  return {
     // Settings
     "passfail"      : false,  // Stop on first error.
     "maxerr"        : 100,    // Maximum error before stopping.
@@ -56,6 +71,7 @@
     "shadow"        : false,  // Allows re-define variables later in code e.g. `var x=1; x=2;`.
     "supernew"      : false,  // Tolerate `new function () { ... };` and `new Object;`.
     "undef"         : true,   // Require all non-global variables be declared before they are used.
+    "laxcomma"      : true,   // Tolerate comma on new line
 
 
     // Personal styling preferences.
@@ -68,6 +84,6 @@
     "sub"           : false,  // Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
     "trailing"      : true,   // Prohibit trailing whitespaces.
     "white"         : true,   // Check against strict whitespace and indentation rules.
-    "indent"        : 4       // Specify indentation spacing
+    "indent"        : 2       // Specify indentation spacing
+  };
 }
-

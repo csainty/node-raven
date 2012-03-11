@@ -1,0 +1,1 @@
+node .\utils\hint.js
