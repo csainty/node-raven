@@ -29,10 +29,11 @@ The test.cmd script assumes a dedicated RavenDb instance is sitting in the .\Rav
 It will delete the data folder, start and stop the server for each run of the tests.  
 You can test against multiple RavenDb versions or configurations by createing additional folders in the format .\RavenDb_{Name}, the test script will run the tests against the RavenDb instance in each folder.
 
-Since there is no auth support yet, please change the following setting (from it's default Get) in Raven.Server.config
+There is currently no windows authentication support. So please set the following settings in your Raven.Server.exe.config
 
 ```
-<add key="Raven/AnonymousAccess" value="All"/>
+<add key="Raven/AnonymousAccess" value="Get" />  <!-- All|Get|None -->
+<add key="Raven/AuthenticationMode" value="oauth" /> <!-- windows|oauth -->
 ```
 
 See Also  

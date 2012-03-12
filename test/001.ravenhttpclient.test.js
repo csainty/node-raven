@@ -1,10 +1,10 @@
-var server_url = 'http://localhost:8080';
-var server_url_mt = 'http://localhost:8080/databases/test/';
 var util = require('util');
 var should = require('should');
 var request = require('request');
-var ravenhttpclient = require('../lib/ravenhttpclient')(server_url);
-var ravenhttpclient_mt = require('../lib/ravenhttpclient')(server_url_mt);
+var info = require('../utils/testinfo.js');
+var ravenhttpclient = require('../lib/ravenhttpclient')({ server_url: info.server_url, auth_user: info.user, auth_password: info.pass });
+var ravenhttpclient_mt = require('../lib/ravenhttpclient')({ server_url: info.server_url_tenant, auth_user: info.user, auth_password: info.pass });
+
 
 describe('RavenHttpClient', function(){
 	describe('options', function() {
@@ -12,27 +12,27 @@ describe('RavenHttpClient', function(){
 			(function () { require('../lib/ravenhttpclient')(); }).should.throw();
 		})
 		it('should allow the server url to passed as a string', function(){
-			(function () { require('../lib/ravenhttpclient')(server_url); }).should.not.throw();
+			(function () { require('../lib/ravenhttpclient')(info.server_url); }).should.not.throw();
 		})
 		it('should allow the server url to be passed on the options object', function(){
-			(function () { require('../lib/ravenhttpclient')({ server_url: server_url }); }).should.not.throw();
+			(function () { require('../lib/ravenhttpclient')({ server_url: info.server_url }); }).should.not.throw();
 		})
 	})
 	describe('.buildUrl', function(){
 		it('should correctly handle path and query string', function(){
-			ravenhttpclient.buildUrl('test', {'q':'search'}).should.equal(server_url + '/test?q=search');
+			ravenhttpclient.buildUrl('test', {'q':'search'}).should.equal(info.server_url + '/test?q=search');
 		})
 		it('should correctly handle no path', function(){
-			ravenhttpclient.buildUrl('', {'q':'search'}).should.equal(server_url + '/?q=search');
+			ravenhttpclient.buildUrl('', {'q':'search'}).should.equal(info.server_url + '/?q=search');
 		})		
 		it('should correctly handle no query', function(){
-			ravenhttpclient.buildUrl('test', null).should.equal(server_url + '/test');
+			ravenhttpclient.buildUrl('test', null).should.equal(info.server_url + '/test');
 		})		
 		it('should correctly handle relative url', function(){
-			ravenhttpclient_mt.buildUrl('/test', null).should.equal(server_url + '/test');
+			ravenhttpclient_mt.buildUrl('/test', null).should.equal(info.server_url + '/test');
 		})		
 		it('should correctly handle absolute urls', function(){
-			ravenhttpclient_mt.buildUrl('test', {'q':'search'}).should.equal(server_url_mt + 'test?q=search');
+			ravenhttpclient_mt.buildUrl('test', {'q':'search'}).should.equal(info.server_url_tenant + 'test?q=search');
 		})
 	})
 	describe('.get', function() {

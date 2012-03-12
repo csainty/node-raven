@@ -15,5 +15,6 @@ start "node-raven-test-server" /MIN .\%1\Raven.Server
 node .\utils\waitforserver.js
 
 echo.---Test results for %1---
+set RAVENDB_TEST_DIR=%1
 cmd /C .\node_modules\.bin\mocha
 taskkill /F /FI "WINDOWTITLE eq node-raven-test-server" > NUL
