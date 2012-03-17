@@ -3,8 +3,8 @@ var should = require('should');
 var request = require('request');
 var raven = require('../lib/client');
 var info = require('../utils/testinfo.js');
-var server= require('../lib/client')({ server_url: info.server_url, auth_user: info.user, auth_password: info.pass });
-var client = require('../lib/ravenhttpclient')({ server_url: info.server_url, auth_user: info.user, auth_password: info.pass });
+var server= require('../lib/client')({ connection_string: info.connection_string });
+var client = require('../lib/ravenhttpclient')({ connection_string: info.connection_string });
 
 describe('Setup', function() {
 	describe('Create default data', function() {
@@ -52,18 +52,18 @@ describe('Client', function() {
 			(function() { require('../lib/client')(); }).should.throw();
 		})
 		it('should allow the server_url to be passed in as a string', function(){
-			(function() { require('../lib/client')(info.server_url); }).should.not.throw();
+			(function() { require('../lib/client')('http://localhost:8080'); }).should.not.throw();
 		})
 		it('should allow the server_url to be passed in via the options hash', function(){
-			(function() { require('../lib/client')({ server_url: info.server_url }); }).should.not.throw();
+			(function() { require('../lib/client')({ server_url: 'http://localhost:8080' }); }).should.not.throw();
 		})
 		it('should allow a database name to be specified', function() {
-			var server2 = require('../lib/client')({ server_url: info.server_url, databaseName: 'testing' });
-			server2.server_url.should.equal(info.server_url + '/databases/testing');
+			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080', databaseName: 'testing' });
+			server2.server_url.should.equal('http://localhost:8080/databases/testing');
 		})
 		it('should trim a trailing slash from a server url', function() {
-			var server2 = require('../lib/client')({ server_url: info.server_url + '/'});
-			server2.server_url.should.equal(info.server_url);
+			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080/'});
+			server2.server_url.should.equal('http://localhost:8080');
 		})
 	})
 
@@ -113,7 +113,7 @@ describe('Client', function() {
 					'raven-entity-name': 'Genres'
 				}
 			};
-			myServer= raven({server_url: info.server_url, useOptimisticConcurrency: true, auth_user: info.user, auth_password: info.pass });
+			myServer= raven({connection_string: info.connection_string, useOptimisticConcurrency: true });
 			myServer.putDocument('genres/1', doc, function(error, result, ok) {
 				should.not.exist(error);
 				should.exist(result);
@@ -298,9 +298,10 @@ describe('Client', function() {
 
 	describe('useDatabase()', function() {
 		it('should alter the server url when using a database', function() {
-			var server2 = require('../lib/client')({ server_url : info.server_url});
-			server2.useDatabase('testing');
-			server2.server_url.should.equal(info.server_url + '/databases/testing');
+			var server2 = require('../lib/client')({ connection_string: info.connection_string });
+			var oldUrl = server2.server_url;
+      server2.useDatabase('testing');
+			server2.server_url.should.not.equal(oldUrl);
 		})
 	})
 

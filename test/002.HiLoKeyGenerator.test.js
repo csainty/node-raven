@@ -2,7 +2,7 @@ var util = require('util');
 var should = require('should');
 var request = require('request');
 var info = require('../utils/testinfo.js');
-var server= require('../lib/client')({ server_url: info.server_url, auth_user: info.user, auth_password: info.pass });
+var server= require('../lib/client')({ connection_string: info.connection_string });
 var hilo = require('../lib/hilokeygenerator')({ client: server });
 
 describe('HiLoKeyGenerator', function(){

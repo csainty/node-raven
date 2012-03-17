@@ -1,19 +1,22 @@
 var fs = require('fs')
   , path = require('path')
-  , user
-  , pass
+  , credentials
   ;
 
-if (path.existsSync(process.env.RAVENDB_TEST_DIR + '/authentication.config')) {
-  var auth = fs.readFileSync(process.env.RAVENDB_TEST_DIR + '/authentication.config', 'utf8');
-  user= auth.match(/Username: (.*)/)[1];
-  pass= auth.match(/Password: (.*)/)[1];
-}
+if (process.env.RAVENDB_TEST_CONNSTRING) {
+  // Testing a remote server based on a connection string
+  module.exports = {
+    connection_string: process.env.RAVENDB_TEST_CONNSTRING
+  };
+} else {
+  // Testing a local server
+  credentials= ''
+  if (path.existsSync(process.env.RAVENDB_TEST_DIR + '/authentication.config')) {
+    var auth = fs.readFileSync(process.env.RAVENDB_TEST_DIR + '/authentication.config', 'utf8');
+    credentials= 'User=' + auth.match(/Username: (.*)/)[1] + ';Password=' + auth.match(/Password: (.*)/)[1];
+  }
 
-module.exports = {
-  folder: process.env.RAVENDB_TEST_DIR,
-  user: user,
-  pass: pass,
-  server_url: 'http://localhost:8080',
-  server_url_tenant: 'http://localhost:8080/databases/test/'
-};
+  module.exports = {
+    connection_string: 'Url=http://localhost:8080;' + credentials
+  };
+}
