@@ -7,7 +7,8 @@ var fs = require('fs')
 if (process.env.RAVENDB_TEST_CONNSTRING) {
   // Testing a remote server based on a connection string
   module.exports = {
-    connection_string: process.env.RAVENDB_TEST_CONNSTRING
+    connection_string: process.env.RAVENDB_TEST_CONNSTRING,
+    isAdmin: process.env.RAVENDB_TEST_NOADMIN ? false : true
   };
 } else {
   // Testing a local server
@@ -22,6 +23,7 @@ if (process.env.RAVENDB_TEST_CONNSTRING) {
   }
 
   module.exports = {
-    connection_string: 'Url=http://localhost:8080;' + credentials + database
+    connection_string: 'Url=http://localhost:8080;' + credentials + database,
+    isAdmin: process.env.RAVENDB_TEST_NOADMIN ? false : true
   };
 }

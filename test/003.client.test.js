@@ -188,24 +188,26 @@ describe('Client', function() {
 	})
 	
 	describe('ensureDatabaseExists()', function() {
-		it('should create a database that does not exist', function(done){
-			server.ensureDatabaseExists('node-raven', function(error, result, ok) {
-				should.not.exist(error);
-				should.exist(result);
-				should.exist(ok);
-				ok.should.be.true;
-				done();
-			});
-		})
-		it('should not error when a database already exists', function(done){
-			server.ensureDatabaseExists('node-raven', function(error, result, ok) {
-				should.not.exist(error);
-				should.exist(result);
-				should.exist(ok);
-				ok.should.be.true;
-				done();
-			});
-		})
+		if (info.isAdmin) {
+      it('should create a database that does not exist', function(done){
+  			server.ensureDatabaseExists('node-raven', function(error, result, ok) {
+  				should.not.exist(error);
+  				should.exist(result);
+  				should.exist(ok);
+  				ok.should.be.true;
+  				done();
+  			});
+  		})
+  		it('should not error when a database already exists', function(done){
+  			server.ensureDatabaseExists('node-raven', function(error, result, ok) {
+  				should.not.exist(error);
+  				should.exist(result);
+  				should.exist(ok);
+  				ok.should.be.true;
+  				done();
+  			});
+  		})
+    }
 		it('should not allow a database with invalid character / in the name', function(done){
 			server.ensureDatabaseExists('node/raven', function(error, result, ok) {
 				should.exist(error);
@@ -300,15 +302,17 @@ describe('Client', function() {
 
 	// Now we have created a database, we can check the getDatabaseNames() function
 	describe('getDatabaseNames()', function() {
-		it('should return an array of database names', function(done){
-			server.getDatabaseNames(function (error, result, data){
-				should.not.exist(error);
-				should.exist(result);
-				should.exist(data)
-				data.should.be.an.instanceof(Array);
-				(data.length >= 1).should.be.true;
-				done();
-			})
-		})
+    if (info.isAdmin) {
+      it('should return an array of database names', function(done){
+        server.getDatabaseNames(function (error, result, data){
+          should.not.exist(error);
+          should.exist(result);
+          should.exist(data)
+          data.should.be.an.instanceof(Array);
+          (data.length >= 1).should.be.true;
+          done();
+        })
+      })
+    }
 	})
 })
