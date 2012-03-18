@@ -25,7 +25,7 @@ describe('HiLoKeyGenerator', function(){
 		var myHiLo= require('../lib/hilokeygenerator')({ client: server, capacity : 10 });
 		function handle(error, key) {
 			count += 1;
-			if (error || count >= 50) { return done(error); }
+			if (error || count >= 20) { return done(error); }
 			key.should.equal('Store/' + count);
 			myHiLo.generateDocumentKey('Store', handle);	
 		}
