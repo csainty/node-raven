@@ -18,7 +18,7 @@ describe('Client', function() {
 			(function() { require('../lib/client')({ server_url: 'http://localhost:8080' }); }).should.not.throw();
 		})
 		it('should allow a database name to be specified', function() {
-			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080', databaseName: 'testing' });
+			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080', database_name: 'testing' });
 			server2.server_url.should.equal('http://localhost:8080/databases/testing');
 		})
 		it('should trim a trailing slash from a server url', function() {
