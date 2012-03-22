@@ -27,15 +27,6 @@ describe('Client', function() {
 		})
 	})
 
-	describe('buildRavenQuery()', function(){
-		it('should correctly encode a raven query', function(){
-			server.buildRavenQuery({ 'Name' : 'Chris' }).should.equal('Name%3AChris');
-		})
-		it('should correctly encode a raven query with multiple values', function(){
-			server.buildRavenQuery({ 'Name' : 'Chris', 'Surname' : 'Sainty' }).should.equal('Name%3AChris%20Surname%3ASainty');
-		})
-	})
-	
 	describe('putDocument()', function() {
 		it('should return true when saving a document', function (done) {
 			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(error, result, ok){
