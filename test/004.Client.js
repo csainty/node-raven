@@ -7,35 +7,6 @@ var server= require('../lib/client')({ connection_string: info.connection_string
 var client = require('../lib/ravenhttpclient')({ connection_string: info.connection_string });
 
 describe('Client', function() {
-	describe('options', function(){
-		it('should error if no server_url is passed in', function(){
-			(function() { require('../lib/client')(); }).should.throw();
-		})
-		it('should allow the server_url to be passed in as a string', function(){
-			(function() { require('../lib/client')('http://localhost:8080'); }).should.not.throw();
-		})
-		it('should allow the server_url to be passed in via the options hash', function(){
-			(function() { require('../lib/client')({ server_url: 'http://localhost:8080' }); }).should.not.throw();
-		})
-		it('should allow a database name to be specified', function() {
-			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080', database_name: 'testing' });
-			server2.server_url.should.equal('http://localhost:8080/databases/testing');
-		})
-		it('should trim a trailing slash from a server url', function() {
-			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080/'});
-			server2.server_url.should.equal('http://localhost:8080');
-		})
-	})
-
-	describe('buildRavenQuery()', function(){
-		it('should correctly encode a raven query', function(){
-			server.buildRavenQuery({ 'Name' : 'Chris' }).should.equal('Name%3AChris');
-		})
-		it('should correctly encode a raven query with multiple values', function(){
-			server.buildRavenQuery({ 'Name' : 'Chris', 'Surname' : 'Sainty' }).should.equal('Name%3AChris%20Surname%3ASainty');
-		})
-	})
-	
 	describe('putDocument()', function() {
 		it('should return true when saving a document', function (done) {
 			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(error, result, ok){
@@ -264,6 +235,7 @@ describe('Client', function() {
 			var oldUrl = server2.server_url;
       server2.useDatabase('testing');
 			server2.server_url.should.not.equal(oldUrl);
+      server2.server_db.should.equal('testing');
 		})
 	})
 
