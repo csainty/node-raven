@@ -7,26 +7,6 @@ var server= require('../lib/client')({ connection_string: info.connection_string
 var client = require('../lib/ravenhttpclient')({ connection_string: info.connection_string });
 
 describe('Client', function() {
-	describe('options', function(){
-		it('should error if no server_url is passed in', function(){
-			(function() { require('../lib/client')(); }).should.throw();
-		})
-		it('should allow the server_url to be passed in as a string', function(){
-			(function() { require('../lib/client')('http://localhost:8080'); }).should.not.throw();
-		})
-		it('should allow the server_url to be passed in via the options hash', function(){
-			(function() { require('../lib/client')({ server_url: 'http://localhost:8080' }); }).should.not.throw();
-		})
-		it('should allow a database name to be specified', function() {
-			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080', database_name: 'testing' });
-			server2.server_url.should.equal('http://localhost:8080/databases/testing');
-		})
-		it('should trim a trailing slash from a server url', function() {
-			var server2 = require('../lib/client')({ server_url: 'http://localhost:8080/'});
-			server2.server_url.should.equal('http://localhost:8080');
-		})
-	})
-
 	describe('putDocument()', function() {
 		it('should return true when saving a document', function (done) {
 			server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(error, result, ok){
