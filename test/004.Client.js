@@ -235,6 +235,7 @@ describe('Client', function() {
 			var oldUrl = server2.server_url;
       server2.useDatabase('testing');
 			server2.server_url.should.not.equal(oldUrl);
+      server2.server_db.should.equal('testing');
 		})
 	})
 
