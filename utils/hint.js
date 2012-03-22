@@ -60,7 +60,7 @@ function config() {
     "eqnull"        : false,  // Tolerate use of `== null`.
     "evil"          : false,  // Tolerate use of `eval`.
     "expr"          : false,  // Tolerate `ExpressionStatement` as Programs.
-    "forin"         : false,  // Tolerate `for in` loops without `hasOwnPrototype`.
+    "forin"         : true,   // Require `for in` loops without `hasOwnPrototype`.
     "immed"         : true,   // Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`
     "latedef"       : true,   // Prohipit variable use before definition.
     "loopfunc"      : false,  // Allow functions to be defined within loops.
@@ -78,7 +78,7 @@ function config() {
     "newcap"        : true,   // Require capitalization of all constructor functions e.g. `new F()`.
     "noempty"       : true,   // Prohibit use of empty blocks.
     "nonew"         : true,   // Prohibit use of constructors for side-effects.
-    "nomen"         : false,   // Prohibit use of initial or trailing underbars in names.
+    "nomen"         : false,  // Prohibit use of initial or trailing underbars in names.
     "onevar"        : true,   // Allow only one `var` statement per function.
     "plusplus"      : true,   // Prohibit use of `++` & `--`.
     "sub"           : false,  // Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
