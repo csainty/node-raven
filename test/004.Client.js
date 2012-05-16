@@ -287,4 +287,27 @@ describe('Client', function() {
       })
     }
 	})
+
+  describe('encoding', function() {
+      it('should be able to save UTF-8 chars', function(done) {
+        var badData, doc;
+        badData = 'ångpanna\u00e5';
+        doc = server.createDocument('TestDoc', {
+          'data': badData
+        });
+        server.store(doc, function(error, result, ok) {
+          should.not.exist(error);
+          should.exist(result);
+          should.exist(ok);
+          ok.should.be.true;
+          doc.should.have.property('id');
+          server.getDocument(doc.id, function(error, result, data) {
+            should.not.exist(error);
+            should.exist(data);
+            data.data.should.equal(badData);
+            done();
+          });
+        });
+      })
+  })
 })
