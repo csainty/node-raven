@@ -128,30 +128,32 @@ describe('Client', function() {
 
   describe('queryIndex()', function(){
     it('should be able to perform a query', function(done){
-      server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'waitForNonStaleResults' : true }, function (error, result, data) {
+      server.queryIndex('Artists', { query : { 'Name' : 'AC/DC' }, 'waitForNonStaleResults' : true }, function (error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(data);
-        data.IndexName.should.equal('Artists');
-        data.IsStale.should.be.false;
-        data.TotalResults.should.equal(1);
-        data.should.have.property('Results');
-        data.Results.should.be.an.instanceof(Array);
-        data.Results.should.have.length(1);
+        should.exist(result.response);
+        should.exist(result.result);
+        result.result.IndexName.should.equal('Artists');
+        result.result.IsStale.should.be.false;
+        result.result.TotalResults.should.equal(1);
+        result.result.should.have.property('Results');
+        result.result.Results.should.be.an.instanceof(Array);
+        result.result.Results.should.have.length(1);
         done();
       });
     })
     it('should be able to perform a query with multiple criteria', function(done){
-      server.queryIndex('Artists', { query : { 'Name' : 'A*', 'Id' : 'artists/1' }, 'waitForNonStaleResults' : true }, function (error, result, data) {
+      server.queryIndex('Artists', { query : { 'Name' : 'A*', 'Id' : 'artists/1' }, 'waitForNonStaleResults' : true }, function (error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(data);
-        data.IndexName.should.equal('Artists');
-        data.IsStale.should.be.false;
-        data.TotalResults.should.equal(14);
-        data.should.have.property('Results');
-        data.Results.should.be.an.instanceof(Array);
-        data.Results.should.have.length(14);
+        should.exist(result.response);
+        should.exist(result.result);
+        result.result.IndexName.should.equal('Artists');
+        result.result.IsStale.should.be.false;
+        result.result.TotalResults.should.equal(14);
+        result.result.should.have.property('Results');
+        result.result.Results.should.be.an.instanceof(Array);
+        result.result.Results.should.have.length(14);
         done();
       });
     })  
