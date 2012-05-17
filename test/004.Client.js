@@ -265,6 +265,7 @@ describe('Client', function() {
       server.generateDocumentKey('Album', { name: 'My Album' }, function(error, entity, key) {
         should.not.exist(error);
         should.exist(key);
+        key.should.be.a('string');
         entity.name.should.equal('My Album');
         entity.id.should.equal(key);
         done();

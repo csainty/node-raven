@@ -7,35 +7,40 @@ var hilo = require('../lib/hilokeygenerator')({ client: server });
 
 describe('HiLoKeyGenerator', function(){
   it('should be able to generate a valid key', function(done){
-    hilo.generateDocumentKey('Album', function(error, key){
+    hilo.generateDocumentKey('Album', function(error, result){
       should.not.exist(error);
-      key.should.equal('Album/1');
+      should.exist(result);
+      result.key.should.equal('Album/1');
       done();     
     })
   })
   it('should be able to generate keys for multiple entity types', function(done) {
-    hilo.generateDocumentKey('Artist', function(error, key){
+    hilo.generateDocumentKey('Artist', function(error, result){
       should.not.exist(error);
-      key.should.equal('Artist/1');
+      should.exist(result);
+      result.key.should.equal('Artist/1');
       done();     
     })
   })
   it('should be able to generate enough keys to require a second set from the server', function(done) {
     var count = 0;
     var myHiLo= require('../lib/hilokeygenerator')({ client: server, capacity : 10 });
-    function handle(error, key) {
+    function handle(error, result) {
       count += 1;
       if (error || count >= 20) { return done(error); }
-      key.should.equal('Store/' + count);
+      should.not.exist(error);
+      should.exist(result);
+      result.key.should.equal('Store/' + count);
       myHiLo.generateDocumentKey('Store', handle);  
     }
     myHiLo.generateDocumentKey('Store', handle);
   })
   it('should be able to generate keys with a different separator', function(done) {
     var myHiLo= require('../lib/hilokeygenerator')({ client: server, keySeparator : '-' });
-    myHiLo.generateDocumentKey('DashTest', function(error, key){
+    myHiLo.generateDocumentKey('DashTest', function(error, result){
       should.not.exist(error);
-      key.should.equal('DashTest-1');
+      should.exist(result);
+      result.key.should.equal('DashTest-1');
       done();     
     })    
   })
@@ -44,9 +49,10 @@ describe('HiLoKeyGenerator', function(){
       should.not.exist(error);
       ok.should.be.true;
 
-      hilo.generateDocumentKey('MaxTest', function (error, key) {
+      hilo.generateDocumentKey('MaxTest', function (error, result) {
         should.not.exist(error);
-        key.should.equal('MaxTest/1001');
+        should.exist(result);
+        result.key.should.equal('MaxTest/1001');
         done();
       })
     })
@@ -56,9 +62,10 @@ describe('HiLoKeyGenerator', function(){
       should.not.exist(error);
       ok.should.be.true;
 
-      hilo.generateDocumentKey('ServerHiTest', function (error, key) {
+      hilo.generateDocumentKey('ServerHiTest', function (error, result) {
         should.not.exist(error);
-        key.should.equal('ServerHiTest/289');
+        should.exist(result);
+        result.key.should.equal('ServerHiTest/289');
         
         server.getDocument('Raven/HiLo/ServerHiTest', function(error, response, doc) {
           should.not.exist(error);
