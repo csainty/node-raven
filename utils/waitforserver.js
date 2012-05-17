@@ -12,6 +12,3 @@ function checkServerIsUp() {
 		checkServerIsUp();
 	});
 }
-
-
-
