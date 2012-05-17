@@ -45,9 +45,9 @@ describe('HiLoKeyGenerator', function(){
     })    
   })
   it('should fetch the max from the server before generating any keys', function(done) {
-    server.putDocument('Raven/HiLo/MaxTest', { max: 1000 }, function(error, response, ok) {
+    server.putDocument('Raven/HiLo/MaxTest', { max: 1000 }, function(error, result) {
       should.not.exist(error);
-      ok.should.be.true;
+      result.ok.should.be.true;
 
       hilo.generateDocumentKey('MaxTest', function (error, result) {
         should.not.exist(error);
@@ -58,9 +58,9 @@ describe('HiLoKeyGenerator', function(){
     })
   })
   it('should convert from ServerHi to Max formatted keys', function(done) {
-    server.putDocument('Raven/HiLo/ServerHiTest', { ServerHi: 10 }, function(error, response, ok) {
+    server.putDocument('Raven/HiLo/ServerHiTest', { ServerHi: 10 }, function(error, result) {
       should.not.exist(error);
-      ok.should.be.true;
+      result.ok.should.be.true;
 
       hilo.generateDocumentKey('ServerHiTest', function (error, result) {
         should.not.exist(error);

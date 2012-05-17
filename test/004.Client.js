@@ -9,10 +9,10 @@ var client = require('../lib/ravenhttpclient')({ connection_string: info.connect
 describe('Client', function() {
   describe('putDocument()', function() {
     it('should return true when saving a document', function (done) {
-      server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(error, result, ok){
+      server.putDocument('testdocs/1', { 'message': 'Testing.1.2.3' }, function(error, result){
         should.not.exist(error);
         should.exist(result);
-        ok.should.be.true;
+        result.ok.should.be.true;
         done();
       })
     })
@@ -24,12 +24,11 @@ describe('Client', function() {
           'raven-entity-name': 'Genres'
         }
       };
-      server.putDocument('genres/2', doc, function(error, result, ok) {
+      server.putDocument('genres/2', doc, function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(ok);
-        result.statusCode.should.equal(201);
-        ok.should.be.true;
+        result.response.statusCode.should.equal(201);
+        result.ok.should.be.true;
         done();
       })
     })
@@ -45,12 +44,11 @@ describe('Client', function() {
         }
       };
       myServer= raven({connection_string: info.connection_string, useOptimisticConcurrency: true });
-      myServer.putDocument('genres/1', doc, function(error, result, ok) {
+      myServer.putDocument('genres/1', doc, function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(ok);
-        result.statusCode.should.equal(409);
-        ok.should.be.false;
+        result.response.statusCode.should.equal(409);
+        result.ok.should.be.false;
         done();
       })
     })
@@ -102,11 +100,11 @@ describe('Client', function() {
       var doc = server.createDocument('TestDoc', {
         'data': 'My new test data'
       });
-      server.store(doc, function(error, result, ok) {
+      server.store(doc, function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(ok);
-        ok.should.be.true;
+        should.exist(result.response);
+        result.ok.should.be.true;
         doc.should.have.property('id');
         done();
       });
@@ -116,11 +114,11 @@ describe('Client', function() {
         'id': 'TestDoc/1',
         'data': 'My new test data'
       });
-      server.store(doc, function(error, result, ok) {
+      server.store(doc, function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(ok);
-        ok.should.be.true;
+        should.exist(result.response);
+        result.ok.should.be.true;
         doc.should.have.property('id');
         doc.id.should.equal('TestDoc/1');
         done();
@@ -162,69 +160,74 @@ describe('Client', function() {
   describe('ensureDatabaseExists()', function() {
     if (info.isAdmin) {
       it('should create a database that does not exist', function(done){
-        server.ensureDatabaseExists('node-raven', function(error, result, ok) {
+        server.ensureDatabaseExists('node-raven', function(error, result) {
           should.not.exist(error);
           should.exist(result);
-          should.exist(ok);
-          ok.should.be.true;
+          should.exist(result.response);
+          result.ok.should.be.true;
           done();
         });
       })
       it('should not error when a database already exists', function(done){
-        server.ensureDatabaseExists('node-raven', function(error, result, ok) {
+        server.ensureDatabaseExists('node-raven', function(error, result) {
           should.not.exist(error);
           should.exist(result);
-          should.exist(ok);
-          ok.should.be.true;
+          should.exist(result.response);
+          result.ok.should.be.true;
           done();
         });
       })
     }
     it('should not allow a database with invalid character / in the name', function(done){
-      server.ensureDatabaseExists('node/raven', function(error, result, ok) {
+      server.ensureDatabaseExists('node/raven', function(error, result) {
         should.exist(error);
-        should.exist(ok);
-        ok.should.be.false;
+        should.not.exist(result.response);
+        result.ok.should.be.false;
         done();
       });
     })
     it('should not allow a database with invalid character \\ in the name', function(done){
-      server.ensureDatabaseExists('node\\raven', function(error, result, ok) {
+      server.ensureDatabaseExists('node\\raven', function(error, result) {
         should.exist(error);
-        should.exist(ok);
-        ok.should.be.false;
+        should.exist(result);
+        should.not.exist(result.response);
+        result.ok.should.be.false;
         done();
       });
     })    
     it('should not allow a database with invalid character < in the name', function(done){
-      server.ensureDatabaseExists('node<raven', function(error, result, ok) {
+      server.ensureDatabaseExists('node<raven', function(error, result) {
         should.exist(error);
-        should.exist(ok);
-        ok.should.be.false;
+        should.exist(result);
+        should.not.exist(result.response);
+        result.ok.should.be.false;
         done();
       });
     })    
     it('should not allow a database with invalid character > in the name', function(done){
-      server.ensureDatabaseExists('node>raven', function(error, result, ok) {
+      server.ensureDatabaseExists('node>raven', function(error, result) {
         should.exist(error);
-        should.exist(ok);
-        ok.should.be.false;
+        should.exist(result);
+        should.not.exist(result.response);
+        result.ok.should.be.false;
         done();
       });
     })    
     it('should not allow a database with invalid character \' in the name', function(done){
-      server.ensureDatabaseExists('node\'raven', function(error, result, ok) {
+      server.ensureDatabaseExists('node\'raven', function(error, result) {
         should.exist(error);
-        should.exist(ok);
-        ok.should.be.false;
+        should.exist(result);
+        should.not.exist(result.response);
+        result.ok.should.be.false;
         done();
       });
     })    
     it('should not allow a database with invalid character " in the name', function(done){
-      server.ensureDatabaseExists('node"raven', function(error, result, ok) {
+      server.ensureDatabaseExists('node"raven', function(error, result) {
         should.exist(error);
-        should.exist(ok);
-        ok.should.be.false;
+        should.exist(result);
+        should.not.exist(result.response);
+        result.ok.should.be.false;
         done();
       });
     })    
@@ -297,11 +300,11 @@ describe('Client', function() {
         doc = server.createDocument('TestDoc', {
           'data': badData
         });
-        server.store(doc, function(error, result, ok) {
+        server.store(doc, function(error, result) {
           should.not.exist(error);
           should.exist(result);
-          should.exist(ok);
-          ok.should.be.true;
+          should.exist(result.response);
+          result.ok.should.be.true;
           doc.should.have.property('id');
           server.getDocument(doc.id, function(error, result) {
             should.not.exist(error);
