@@ -268,12 +268,13 @@ describe('Client', function() {
       should.exist(server.keyGenerator);
     })
     it('should assign key to document', function(done) {
-      server.generateDocumentKey('Album', { name: 'My Album' }, function(error, entity, key) {
+      server.generateDocumentKey('Album', { name: 'My Album' }, function(error, result) {
         should.not.exist(error);
-        should.exist(key);
-        key.should.be.a('string');
-        entity.name.should.equal('My Album');
-        entity.id.should.equal(key);
+        should.exist(result);
+        should.exist(result.document);
+        result.key.should.be.a('string');
+        result.document.name.should.equal('My Album');
+        result.document.id.should.equal(result.key);
         done();
       })
     })
