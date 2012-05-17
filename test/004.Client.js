@@ -283,12 +283,13 @@ describe('Client', function() {
   describe('getDatabaseNames()', function() {
     if (info.isAdmin) {
       it('should return an array of database names', function(done){
-        server.getDatabaseNames(function (error, result, data){
+        server.getDatabaseNames(function (error, result){
           should.not.exist(error);
           should.exist(result);
-          should.exist(data)
-          data.should.be.an.instanceof(Array);
-          (data.length >= 1).should.be.true;
+          should.exist(result.databases);
+          should.exist(result.response);
+          result.databases.should.be.an.instanceof(Array);
+          (result.databases.length >= 1).should.be.true;
           done();
         })
       })
