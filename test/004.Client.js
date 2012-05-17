@@ -58,32 +58,33 @@ describe('Client', function() {
   
   describe('getDocument()', function(){
     it('should return null if document is not found', function (done) {
-      server.getDocument('invalidKey', function(error, result, data) {
+      server.getDocument('invalidKey', function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.not.exist(data);
-        result.statusCode.should.equal(404);
+        should.not.exist(result.document);
+        should.exist(result.response);
+        result.response.statusCode.should.equal(404);
         done();
       });
     })
     it('should return the correct document', function (done) {
-      server.getDocument('genres/1', function(error, result, data) {
+      server.getDocument('genres/1', function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(data);
-        data.Name.should.equal('Rock');
+        should.exist(result.document);
+        result.document.Name.should.equal('Rock');
         done();
       });
     })
     it('should return a document with metadata', function (done) {
-      server.getDocument('genres/1', function(error, result, data) {
+      server.getDocument('genres/1', function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(data);
-        data.should.have.property('@metadata');
-        data['@metadata'].should.have.property('etag');
-        data['@metadata'].should.have.property('raven-entity-name');
-        data['@metadata']['raven-entity-name'].should.equal('Genres');
+        should.exist(result.document);
+        result.document.should.have.property('@metadata');
+        result.document['@metadata'].should.have.property('etag');
+        result.document['@metadata'].should.have.property('raven-entity-name');
+        result.document['@metadata']['raven-entity-name'].should.equal('Genres');
         done();
       });     
     })
@@ -302,10 +303,11 @@ describe('Client', function() {
           should.exist(ok);
           ok.should.be.true;
           doc.should.have.property('id');
-          server.getDocument(doc.id, function(error, result, data) {
+          server.getDocument(doc.id, function(error, result) {
             should.not.exist(error);
-            should.exist(data);
-            data.data.should.equal(badData);
+            should.exist(result);
+            should.exist(result.document);
+            result.document.data.should.equal(badData);
             done();
           });
         });

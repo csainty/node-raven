@@ -67,11 +67,11 @@ describe('HiLoKeyGenerator', function(){
         should.exist(result);
         result.key.should.equal('ServerHiTest/289');
         
-        server.getDocument('Raven/HiLo/ServerHiTest', function(error, response, doc) {
+        server.getDocument('Raven/HiLo/ServerHiTest', function(error, result) {
           should.not.exist(error);
-          response.statusCode.should.equal(200);
-          should.exist(doc);
-          should.not.exist(doc.ServerHi); // Make sure we removed the old property
+          result.response.statusCode.should.equal(200);
+          should.exist(result.document);
+          should.not.exist(result.document.ServerHi); // Make sure we removed the old property
           done();
         })
       })
