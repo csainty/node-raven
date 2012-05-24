@@ -1,7 +1,7 @@
 {
   "name": "node-raven",
   "description":"Client for RavenDb document database",
-  "version":"0.0.1",
+  "version":"0.1.0",
   "author":"Chris Sainty <csainty@hotmail.com>",
   "dependencies": {
     "request": "> 2.9.0 < 2.10.0",
