@@ -82,7 +82,7 @@ function config() {
     "onevar"        : true,   // Allow only one `var` statement per function.
     "plusplus"      : true,   // Prohibit use of `++` & `--`.
     "sub"           : false,  // Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
-    "trailing"      : true,   // Prohibit trailing whitespaces.
+    "trailing"      : false,  // Prohibit trailing whitespaces.
     "white"         : true,   // Check against strict whitespace and indentation rules.
     "indent"        : 2       // Specify indentation spacing
   };
