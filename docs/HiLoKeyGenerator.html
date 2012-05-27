@@ -1,0 +1,151 @@
+<!DOCTYPE html>  <html> <head>   <title>HiLoKeyGenerator.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               HiLoKeyGenerator.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>node-raven - A RavenDB client for node.js <br />
+Copyright (c) 2011-2012 Chris Sainty <a href="&#109;&#x61;&#x69;&#x6C;&#x74;&#x6F;:&#99;&#x73;&#97;&#105;&#x6E;&#x74;&#x79;&#64;&#104;&#111;&#x74;&#109;&#x61;&#105;&#x6C;&#46;c&#111;&#x6D;">&#99;&#x73;&#97;&#105;&#x6E;&#x74;&#x79;&#64;&#104;&#111;&#x74;&#109;&#x61;&#105;&#x6C;&#46;c&#111;&#x6D;</a> <br />
+MIT License <br />
+<a href="https://github.com/csainty/node-raven">GitHub</a> <a href="http://twitter.com/csainty">Twitter</a> <a href="http://blog.csainty.com">Blog</a></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>A document key generator that reserves ranges of keys from the server allowing
+it to creating new entities with fewer round trips to the server.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+
+</pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p><code>var hilo = require('HiLoKeyGenerator.js');</code></p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">qs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;querystring&#39;</span><span class="p">);</span>
+
+
+</pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h1>Creating your instance</h1>
+
+<p><code>var keygen = hilo(options);</code>  </p>
+
+<h4>Options:</h4>
+
+<pre><code> {
+   client: Client instance
+   keySeparator: Separator character used in keys
+                 (default: /)
+   capacity: The number of keys to reserve in each batch
+             (default: 32)
+ }
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">HiLoKeyGenerator</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span> <span class="o">||</span> <span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">client</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;You must specify the client when creating HiLoKeyGenerator&#39;</span><span class="p">);</span> <span class="p">}</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">keySeparator</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">keySeparator</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span> <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">capacity</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">capacity</span> <span class="o">=</span> <span class="mi">32</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">documentPrefix</span> <span class="o">=</span> <span class="s1">&#39;Raven/Hilo/&#39;</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">entityGenerators</span> <span class="o">=</span> <span class="p">{};</span> <span class="c1">// Hold each entity type&#39;s generator</span>
+<span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h1>Generate a new document key for the provided entity type</h1>
+
+<p><code>keygen.generateDocumentKey(entityType, [callback]);</code></p>
+
+<h4>Parameters:</h4>
+
+<p><code>entityType</code> - The type of document</p>
+
+<h4>Callback:</h4>
+
+<pre><code> function (error, result)
+
+ result:
+ {
+   key: The generated key
+ }
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">HiLoKeyGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">generateDocumentKey</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">entityType</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">_nextId</span><span class="p">(</span><span class="nx">entityType</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="p">{</span> <span class="nx">key</span><span class="o">:</span> <span class="nx">entityType</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">keySeparator</span> <span class="o">+</span> <span class="nx">id</span> <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h1>Internal functions</h1>             </td>             <td class="code">               <div class="highlight"><pre>
+
+</pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h2>_nextId</h2>
+
+<p>Find the next available id, if we have used our range up, then fetch a new range from the server</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">HiLoKeyGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_nextId</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">entityType</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="p">,</span> <span class="nx">generator</span><span class="p">;</span>
+    
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">self</span><span class="p">.</span><span class="nx">entityGenerators</span><span class="p">[</span><span class="nx">entityType</span><span class="p">])</span> <span class="p">{</span>
+</pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>First time generating this entity, create a placeholder document before fetching it from the server.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">entityGenerators</span><span class="p">[</span><span class="nx">entityType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">lastId</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">currentMax</span><span class="o">:</span> <span class="mi">0</span> <span class="p">};</span>
+  <span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Increment our current then validate against the max</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="nx">generator</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">entityGenerators</span><span class="p">[</span><span class="nx">entityType</span><span class="p">];</span>
+  <span class="nx">generator</span><span class="p">.</span><span class="nx">lastId</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">generator</span><span class="p">.</span><span class="nx">lastId</span> <span class="o">&gt;</span> <span class="nx">generator</span><span class="p">.</span><span class="nx">currentMax</span><span class="p">)</span> <span class="p">{</span>
+</pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>We have exceeded the currently assigned limit, get a new limit</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">_getNextMax</span><span class="p">(</span><span class="nx">entityType</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span> <span class="p">}</span>
+      
+      <span class="nx">generator</span><span class="p">.</span><span class="nx">lastId</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="nx">generator</span><span class="p">.</span><span class="nx">lastId</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>We are still in range, so just send it back</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="nx">generator</span><span class="p">.</span><span class="nx">lastId</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h2>_getNextMax</h2>
+
+<p>Query the server for the next reserved id range for these entities</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">HiLoKeyGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_getNextMax</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">entityName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">getDocument</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">documentPrefix</span> <span class="o">+</span> <span class="nx">entityName</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">lastMax</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">error</span> <span class="o">||</span> <span class="o">!</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span> <span class="p">}</span>
+
+    <span class="nx">doc</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">ServerHi</span><span class="p">)</span> <span class="p">{</span>
+</pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>We have the older format ServerHi document, convert to the new Max which supports changing capacity</p>             </td>             <td class="code">               <div class="highlight"><pre>
+        <span class="nx">doc</span><span class="p">.</span><span class="nx">max</span> <span class="o">=</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">ServerHi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="nx">self</span><span class="p">.</span><span class="nx">capacity</span><span class="p">;</span>
+        <span class="nx">doc</span><span class="p">.</span><span class="nx">ServerHi</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="nx">lastMax</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">max</span><span class="p">;</span>
+      <span class="nx">doc</span><span class="p">.</span><span class="nx">max</span> <span class="o">+=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">capacity</span><span class="p">;</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">putDocument</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">documentPrefix</span> <span class="o">+</span> <span class="nx">entityName</span><span class="p">,</span> <span class="nx">doc</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">error</span> <span class="o">||</span> <span class="o">!</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">result</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Unable to update HiLO metadata&#39;</span><span class="p">));</span> <span class="p">}</span>
+
+        <span class="nx">self</span><span class="p">.</span><span class="nx">entityGenerators</span><span class="p">[</span><span class="nx">entityName</span><span class="p">].</span><span class="nx">currentMax</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">max</span><span class="p">;</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">entityGenerators</span><span class="p">[</span><span class="nx">entityName</span><span class="p">].</span><span class="nx">lastId</span> <span class="o">=</span> <span class="nx">lastMax</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">undefined</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Doc doesn't exist on server, so create a new one</p>             </td>             <td class="code">               <div class="highlight"><pre>
+      <span class="nx">doc</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">max</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">capacity</span><span class="p">,</span> <span class="s1">&#39;@metadata&#39;</span> <span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;etag&#39;</span> <span class="o">:</span> <span class="s1">&#39;00000000-0000-0000-000000000000&#39;</span> <span class="p">}</span> <span class="p">};</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">putDocument</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">documentPrefix</span> <span class="o">+</span> <span class="nx">entityName</span><span class="p">,</span> <span class="nx">doc</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">error</span> <span class="o">||</span> <span class="o">!</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">result</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Unable to update HiLoKeyGenerator metadata&#39;</span><span class="p">));</span> <span class="p">}</span>
+    
+        <span class="nx">self</span><span class="p">.</span><span class="nx">entityGenerators</span><span class="p">[</span><span class="nx">entityName</span><span class="p">].</span><span class="nx">currentMax</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">max</span><span class="p">;</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">entityGenerators</span><span class="p">[</span><span class="nx">entityName</span><span class="p">].</span><span class="nx">lastId</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">undefined</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+
+</pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Expose via factory method.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">generator</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nx">HiLoKeyGenerator</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">generator</span><span class="p">;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

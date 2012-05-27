@@ -1,0 +1,267 @@
+<!DOCTYPE html>  <html> <head>   <title>RavenHttpClient.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               RavenHttpClient.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>node-raven - A RavenDB client for node.js <br />
+Copyright (c) 2011-2012 Chris Sainty <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6F;:&#x63;&#115;a&#x69;&#x6E;&#x74;&#x79;&#x40;&#104;&#111;&#x74;&#x6D;&#97;&#105;&#108;&#x2E;&#x63;o&#109;">&#x63;&#115;a&#x69;&#x6E;&#x74;&#x79;&#x40;&#104;&#111;&#x74;&#x6D;&#97;&#105;&#108;&#x2E;&#x63;o&#109;</a> <br />
+MIT License <br />
+<a href="https://github.com/csainty/node-raven">GitHub</a> <a href="http://twitter.com/csainty">Twitter</a> <a href="http://blog.csainty.com">Blog</a></p>             </td>             <td class="code">               <div class="highlight"><pre> 
+</pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>HTTP Client for communicating with a RavenDB server. <br />
+Deals with HTTP level concerns such as Authentication, Compression and Caching</p>             </td>             <td class="code">               <div class="highlight"><pre>
+
+</pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p><code>var http = require('RavenHttpClient.js');</code></p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">)</span>
+  <span class="p">,</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span>
+  <span class="p">,</span> <span class="nx">utils</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../lib/RavenUtils.js&#39;</span><span class="p">)</span>
+  <span class="p">;</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h1>Internal functions</h1>             </td>             <td class="code">               <div class="highlight"><pre>
+
+</pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h2>oAuthTokenRequest</h2>
+
+<p>Requests oAuth token from the server</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">oAuthTokenRequest</span><span class="p">(</span><span class="nx">client</span><span class="p">,</span> <span class="nx">authSource</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;grant_type&#39;</span><span class="o">:</span> <span class="s1">&#39;client_credentials&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;accept&#39;</span><span class="o">:</span> <span class="s1">&#39;application/json;charset=UTF-8&#39;</span>
+  <span class="p">};</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">client</span><span class="p">.</span><span class="nx">auth_user</span> <span class="o">&amp;&amp;</span> <span class="nx">client</span><span class="p">.</span><span class="nx">auth_password</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">headers</span><span class="p">.</span><span class="nx">authorization</span> <span class="o">=</span> <span class="s1">&#39;Basic &#39;</span> <span class="o">+</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">toBase64</span><span class="p">(</span><span class="nx">client</span><span class="p">.</span><span class="nx">auth_user</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">client</span><span class="p">.</span><span class="nx">auth_password</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">client</span><span class="p">.</span><span class="nx">server_api_key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;Api-Key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">server_api_key</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">request</span><span class="p">({</span>
+    <span class="nx">uri</span><span class="o">:</span> <span class="nx">authSource</span><span class="p">,</span>
+    <span class="nx">headers</span><span class="o">:</span> <span class="nx">headers</span>
+  <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
+<span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h2>handleResponse</h2>
+
+<p>Factory to create a function that handles the response from the server wrapping the passed callback
+to deal with authentication</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">handleResponse</span><span class="p">(</span><span class="nx">client</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">callback</span> <span class="o">=</span> <span class="nx">callback</span> <span class="o">||</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="p">};</span>
+
+  <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">===</span> <span class="mi">401</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">authType</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;www-authenticate&#39;</span><span class="p">]</span>
+          <span class="p">,</span> <span class="nx">authSource</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;oauth-source&#39;</span><span class="p">]</span>
+          <span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">authType</span> <span class="o">&amp;&amp;</span> <span class="nx">authSource</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">oAuthTokenRequest</span><span class="p">(</span><span class="nx">client</span><span class="p">,</span> <span class="nx">authSource</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">client</span><span class="p">.</span><span class="nx">Authorization</span> <span class="o">=</span> <span class="s2">&quot;Bearer &quot;</span> <span class="o">+</span> <span class="nx">body</span><span class="p">;</span>
+              <span class="nx">client</span><span class="p">.</span><span class="nx">wrapRequest</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Unable to auth&#39;</span><span class="p">),</span> <span class="p">{</span> <span class="p">});</span>
+            <span class="p">}</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">httpResponse</span><span class="o">:</span> <span class="nx">response</span><span class="p">,</span>
+        <span class="nx">statusCode</span><span class="o">:</span> <span class="nx">response</span> <span class="o">?</span> <span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">content</span><span class="o">:</span> <span class="nx">body</span><span class="p">,</span>
+        <span class="nx">asJson</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span> <span class="p">}</span>
+      <span class="p">});</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h1>Create your instance</h1>
+
+<p><code>var client = http(options);</code></p>
+
+<h4>Options:</h4>
+
+<pre><code>{ }
+</code></pre>
+
+<p>See <a href="ravenutils.html#section-4">Connection</a> options for details on specifying your server details</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">RavenHttpClient</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">options</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">prepareServerOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  
+  <span class="k">this</span><span class="p">.</span><span class="nx">server_url_parts</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">server_url</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">server_url_root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">server_url_parts</span><span class="p">.</span><span class="nx">protocol</span> <span class="o">+</span> <span class="s1">&#39;//&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">server_url_parts</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
+<span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h1>Combines url of the server with path and query segments</h1>
+
+<p><code>client.buildUrl(path, query);</code></p>
+
+<h4>Parameters:</h4>
+
+<p><code>path</code> - Path of the request. Paths are relative to the multi-tenant server url, use absolute paths for server level requests, and relative for database level <br />
+<code>query</code> - Hash of querystring parameters</p>
+
+<h4>Returns:</h4>
+
+<p>The combined URL</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenHttpClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">buildUrl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">server_url_parts</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">parts</span><span class="p">.</span><span class="nx">pathname</span> <span class="o">=</span> <span class="nx">path</span><span class="p">;</span> <span class="c1">// Go back to root</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">parts</span><span class="p">.</span><span class="nx">pathname</span><span class="p">[</span><span class="nx">parts</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">parts</span><span class="p">.</span><span class="nx">pathname</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">parts</span><span class="p">.</span><span class="nx">pathname</span> <span class="o">+=</span> <span class="nx">path</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">parts</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="nx">query</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">url</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="nx">parts</span><span class="p">);</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h1>Wrap server requests to handle auth, proxying etc</h1>
+
+<p><code>client.wrapRequest(req, [callback]);</code></p>
+
+<h4>Parameters:</h4>
+
+<p><code>req</code> - The request object that is being wrapped</p>
+
+<h4>Callback:</h4>
+
+<p>A standard callback for the <code>request</code> library</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenHttpClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">wrapRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span> <span class="o">||</span> <span class="p">{</span> <span class="p">};</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">Authorization</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">Authorization</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">Authorization</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">json</span><span class="p">);</span>
+    <span class="k">delete</span> <span class="nx">req</span><span class="p">.</span><span class="nx">json</span><span class="p">;</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/json; charset=utf-8&#39;</span><span class="p">;</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">accept</span> <span class="o">=</span> <span class="s1">&#39;application/json&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Uncomment to test with fiddler <br />
+req.proxy: 'http://localhost:8888'</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="nx">request</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">handleResponse</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">callback</span><span class="p">));</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h1>Perform a GET request against the server</h1>
+
+<p><code>client.get(path, query, [callback]);</code></p>
+
+<h4>Parameters:</h4>
+
+<p><code>path</code> - Path of the request. Paths are relative to the multi-tenant server url, use absolute paths for server level requests, and relative for database level <br />
+<code>query</code> - Path of the request. Hash of querystring parameters</p>
+
+<h4>Callback:</h4>
+
+<pre><code> function (error, result)
+
+ result:
+ {
+   httpResponse: The HTTP response
+   statusCode: The status code of the response
+   content: The body of the response
+   asJson(): A function to deserialize a json body
+ }
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenHttpClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">wrapRequest</span><span class="p">({</span>
+      <span class="nx">uri</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">buildUrl</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span>
+    <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h1>Perform a PUT request against the server</h1>
+
+<p><code>client.put(path, query, content, headers [callback]);</code></p>
+
+<h4>Parameters:</h4>
+
+<p><code>path</code> - Path of the request. Paths are relative to the multi-tenant server url, use absolute paths for server level requests, and relative for database level <br />
+<code>query</code> - Path of the request. Hash of querystring parameters <br />
+<code>content</code> - Hash to be converted to JSON and sent to the server as the body of the request
+<code>headers</code> - Hash of http headers to send with request</p>
+
+<h4>Callback:</h4>
+
+<pre><code> function (error, result)
+
+ result:
+ {
+   httpResponse: The HTTP response
+   statusCode: The status code of the response
+   content: The body of the response
+   asJson(): A function to deserialize a json body
+ }
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenHttpClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">put</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">wrapRequest</span><span class="p">({</span>
+      <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;PUT&#39;</span><span class="p">,</span>
+      <span class="nx">uri</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">buildUrl</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">),</span>
+      <span class="nx">json</span><span class="o">:</span> <span class="nx">content</span><span class="p">,</span>
+      <span class="nx">headers</span><span class="o">:</span> <span class="nx">headers</span>
+    <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <h1>Perform a POST request against the server</h1>
+
+<p><code>client.post(path, query, content, headers [callback]);</code></p>
+
+<h4>Parameters:</h4>
+
+<p><code>path</code> - Path of the request. Paths are relative to the multi-tenant server url, use absolute paths for server level requests, and relative for database level <br />
+<code>query</code> - Path of the request. Hash of querystring parameters <br />
+<code>content</code> - Hash to be converted to JSON and sent to the server as the body of the request
+<code>headers</code> - Hash of http headers to send with request</p>
+
+<h4>Callback:</h4>
+
+<pre><code> function (error, result)
+
+ result:
+ {
+   httpResponse: The HTTP response
+   statusCode: The status code of the response
+   content: The body of the response
+   asJson(): A function to deserialize a json body
+ }
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenHttpClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">post</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">wrapRequest</span><span class="p">({</span>
+      <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+      <span class="nx">uri</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">buildUrl</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">),</span>
+      <span class="nx">json</span><span class="o">:</span> <span class="nx">content</span><span class="p">,</span>
+      <span class="nx">headers</span><span class="o">:</span> <span class="nx">headers</span>
+    <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <h1>Select a database</h1>
+
+<p>Note: It is preferable to use the constructor argument <code>server_db</code>
+<code>client.getDatabaseNames(name);</code></p>
+
+<h4>Parameters:</h4>
+
+<p><code>name</code> - The name of the database to use</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenHttpClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">useDatabase</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">server_url</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">server_url_root</span> <span class="o">+</span> <span class="s1">&#39;/databases/&#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+</pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Expose via factory method.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">ravenHttpClient</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nx">RavenHttpClient</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">ravenHttpClient</span><span class="p">;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

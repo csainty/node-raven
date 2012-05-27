@@ -1,0 +1,102 @@
+<!DOCTYPE html>  <html> <head>   <title>RavenUtils.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               RavenUtils.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>node-raven - A RavenDB client for node.js <br />
+Copyright (c) 2011-2012 Chris Sainty <a href="&#x6D;&#97;&#x69;&#x6C;&#x74;o:c&#115;&#97;&#x69;&#110;&#116;y&#x40;&#x68;&#111;&#x74;&#109;&#x61;&#x69;&#x6C;.&#99;&#x6F;&#x6D;">c&#115;&#97;&#x69;&#110;&#116;y&#x40;&#x68;&#111;&#x74;&#109;&#x61;&#x69;&#x6C;.&#99;&#x6F;&#x6D;</a> <br />
+MIT License <br />
+<a href="https://github.com/csainty/node-raven">GitHub</a> <a href="http://twitter.com/csainty">Twitter</a> <a href="http://blog.csainty.com">Blog</a></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>A collection of utilities to help us out</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">qs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;querystring&#39;</span><span class="p">)</span>
+  <span class="p">;</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p><code>var utils = require('RavenUtils.js');</code></p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="kd">function</span> <span class="nx">RavenUtils</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+
+
+</pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h1>Parse server options and perform any validation, transformation or cleanup required</h1>
+
+<p><code>utils.prepareServerOptions([options]);</code></p>
+
+<h4>Options:</h4>
+
+<pre><code> {
+   connection_string: "Url=&lt;server url&gt;;
+                       ApiKey=&lt;server api key&gt;;
+                       User=&lt;oAuth user&gt;;
+                       Password=&lt;oAuth password&gt;;
+                       Database=&lt;Database name&gt;"
+   // If you are not using the connection string
+   server_url: &lt;server url&gt;
+   auth_user: &lt;oAuth user&gt;
+   auth_password: &lt;oAuth password&gt;
+   server_api_key: &lt;Server API key&gt;
+   database_name= &lt;Database name&gt;
+ }
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenUtils</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">prepareServerOptions</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">parts</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">server_url</span> <span class="o">:</span> <span class="nx">options</span> <span class="p">};</span> <span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Parse connection string if present</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;connection_string&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">o</span> <span class="o">=</span> <span class="nx">qs</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">connection_string</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">Url</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">Url</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">ApiKey</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span><span class="p">.</span><span class="nx">server_api_key</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">ApiKey</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span><span class="p">.</span><span class="nx">auth_user</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">User</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">Password</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span><span class="p">.</span><span class="nx">auth_password</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">Password</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">Database</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">DefaultDatabase</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span><span class="p">.</span><span class="nx">database_name</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">Database</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">DefaultDatabase</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">delete</span> <span class="nx">options</span><span class="p">.</span><span class="nx">connection_string</span><span class="p">;</span>
+  <span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>We should have our sever url by now</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;server_url&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span> <span class="o">!==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;You must specify a server_url&#39;</span><span class="p">);</span> <span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Strip trailing / if present</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span><span class="p">[</span><span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>If a database name was passed in the options, use it to build a tenant url</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s1">&#39;database_name&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">server_url</span> <span class="o">+=</span> <span class="s1">&#39;/databases/&#39;</span> <span class="o">+</span> <span class="nx">options</span><span class="p">.</span><span class="nx">database_name</span><span class="p">;</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">server_db</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">database_name</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="nx">options</span><span class="p">.</span><span class="nx">database_name</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">options</span><span class="p">;</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <h1>Base64 encode a string</h1>
+
+<p><code>utils.toBase64(str);</code></p>
+
+<h4>Options:</h4>
+
+<p><code>str</code> - The string to encode</p>
+
+<h4>Returns:</h4>
+
+<p>The encoded string</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenUtils</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toBase64</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">str</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;ascii&quot;</span><span class="p">)).</span><span class="nx">toString</span><span class="p">(</span><span class="s2">&quot;base64&quot;</span><span class="p">);</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h1>Combine the elements of an object hash into a querystring suitable for passing to RavenDB</h1>
+
+<p><code>utils.buildRavenQuery(query);</code></p>
+
+<h4>Options:</h4>
+
+<p><code>str</code> - Hash of values to build string out of</p>
+
+<h4>Returns:</h4>
+
+<p>The querystring</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">RavenUtils</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">buildRavenQuery</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="nx">i</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">s</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nx">query</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">qs</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+<span class="p">};</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Expose as a single instance</p>             </td>             <td class="code">               <div class="highlight"><pre>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RavenUtils</span><span class="p">();</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
