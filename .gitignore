@@ -1,0 +1,5 @@
+
+/node_modules/*
+.project
+RavenDb*/
+_RavenDb*/
