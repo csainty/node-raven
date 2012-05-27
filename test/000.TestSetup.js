@@ -9,11 +9,10 @@ describe('Test Setup', function () {
   it('should ensure database exists', function (done) {
     // Testing in a database so ensure it exists
     if (server.server_db) {
-      server.ensureDatabaseExists(server.server_db, function(error, result, ok) {
+      server.ensureDatabaseExists(server.server_db, function(error, result) {
         should.not.exist(error);
         should.exist(result);
-        should.exist(ok);
-        ok.should.be.true;
+        result.ok.should.be.true;
         done();
       });
     } else {
