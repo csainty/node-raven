@@ -1,5 +1,4 @@
 var fs = require('fs')
-  , path = require('path')
   , credentials
   , database
   ;
@@ -14,7 +13,7 @@ if (process.env.RAVENDB_TEST_CONNSTRING) {
   // Testing a local server
   credentials= '';
   database= '';
-  if (path.existsSync(process.env.RAVENDB_TEST_DIR + '/authentication.config')) {
+  if (fs.existsSync(process.env.RAVENDB_TEST_DIR + '/authentication.config')) {
     var auth = fs.readFileSync(process.env.RAVENDB_TEST_DIR + '/authentication.config', 'utf8');
     credentials= 'User=' + auth.match(/Username: (.*)/)[1] + ';Password=' + auth.match(/Password: (.*)/)[1] + ';';
   }
