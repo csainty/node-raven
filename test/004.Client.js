@@ -52,6 +52,19 @@ describe('Client', function() {
         done();
       })
     })
+
+    it('should save a document with utf8 id', function(done) {
+      var doc = {
+        'Description': 'Tasty!'
+      };
+      server.putDocument('food/Räksmörgås', doc, function(error, result) {
+        should.not.exist(error);
+        should.exist(result);
+        result.response.statusCode.should.equal(201);
+        result.ok.should.be.true;
+        done();        
+      })
+    })
   })
   
   describe('getDocument()', function(){
@@ -85,6 +98,15 @@ describe('Client', function() {
         result.document['@metadata']['raven-entity-name'].should.equal('Genres');
         done();
       });     
+    })
+    it('should load a document with utf8 chars in id', function (done) {
+      server.getDocument('food/Räksmörgås', function(error, result) {
+        should.not.exist(error);
+        should.exist(result);
+        should.exist(result.document);
+        result.document.should.have.property('Description');
+        done();
+      })
     })
   })
   
