@@ -19,6 +19,9 @@ describe('RavenHttpClient', function(){
     it('should correctly handle absolute url', function(){
       ravenhttpclient.buildUrl('/test', null).should.equal(ravenhttpclient.server_url_root + '/test');
     })
+    it('should encode the uri path', function(){
+      ravenhttpclient.buildUrl('/test/skåne/1', null).should.equal(ravenhttpclient.server_url_root + '/test/sk%C3%A5ne/1');
+    })
   })
   describe('.get', function() {
     it('should be able to perform a GET request', function(done) {
