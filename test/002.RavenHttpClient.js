@@ -25,7 +25,7 @@ describe('RavenHttpClient', function(){
   })
   describe('.get', function() {
     it('should be able to perform a GET request', function(done) {
-      ravenhttpclient.get('databases', null, function(error, result) {
+      ravenhttpclient.get('/databases', null, function(error, result) {
         should.not.exist(error);
         result.statusCode.should.equal(200);
         result.asJson().should.be.an.instanceof(Array);
