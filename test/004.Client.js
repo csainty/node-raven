@@ -268,7 +268,7 @@ describe('Client', function() {
   })
 
   describe('createDocument()', function() {
-    it('should be able to create a blank document with the propvided metadata set', function() {
+    it('should be able to create a blank document with the provided metadata set', function() {
       var result = server.createDocument('TestDoc');
       should.exist(result);
       result.should.have.property('@metadata');
@@ -342,4 +342,27 @@ describe('Client', function() {
         });
       })
   })
+})
+
+describe('datetime', function() {
+    it('should be able to serialize and deserialize a date', function(done) {
+        var date = new Date();
+        var doc = server.createDocument('DateTimeDoc', {
+            'date': date
+        });
+        server.store(doc, function(error, result) {
+            should.not.exist(error);
+            should.exist(result);
+            should.exist(result.response);
+            result.ok.should.be.true;
+            doc.should.have.property('id');
+            server.getDocument(doc.id, function(error, result) {
+                should.not.exist(error);
+                should.exist(result);
+                should.exist(result.document);
+                Date.parse(result.document.date).should.equal(date);
+                done();
+            });
+        })
+    })
 })
