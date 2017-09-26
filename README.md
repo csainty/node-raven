@@ -43,6 +43,6 @@ Node.js - http://nodejs.org
 Request - https://github.com/mikeal/request  
 Underscore - http://documentcloud.github.com/underscore/  
 Should - https://github.com/visionmedia/should.js  
-Mocha - http://visionmedia.github.com/mocha/  
+Mocha - http://mochajs.org/  
 Jshint - https://github.com/jshint/node-jshint  
 Chris Sainty - http://blog.csainty.com  -  @csainty  
